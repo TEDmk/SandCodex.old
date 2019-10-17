@@ -7,8 +7,8 @@ import signal
 
 def text_to_tar_stream(text: str, name: str):
     tar_stream = BytesIO()
-    tar = tarfile.TarFile(fileobj=tar_stream, mode='w')
-    file = text.encode('utf8')
+    tar = tarfile.TarFile(fileobj=tar_stream, mode="w")
+    file = text.encode("utf8")
     tarinfo = tarfile.TarInfo(name=name)
     tarinfo.size = len(file)
     tarinfo.mtime = time.time()
@@ -16,6 +16,7 @@ def text_to_tar_stream(text: str, name: str):
     tar.close()
     tar_stream.seek(0)
     return tar_stream
+
 
 @contextmanager
 def timeout_func(time):

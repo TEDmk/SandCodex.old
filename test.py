@@ -1,12 +1,12 @@
-from sand_codex.worker import Worker
+from sand_codex import SandCodex
 import docker
+import logging
 
-client = docker.from_env()
-worker = Worker(client, "sandcodex_worker_python", command='python codes/{0}/code.py {1}')
-worker.launch()
-a = worker.exec("""
-import sys
-print ('Number of arguments:', len(sys.argv), 'arguments.')
-print ('Argument List:', str(sys.argv))
-""", ['test', 'test'])
-print(a)
+logging.basicConfig(format=FORMAT)
+
+sand_codex = SandCodex({
+        "Python3": {
+            "image": "sandcodex_worker_python:latest",
+            "command": "python codes/{0}/code.py {1}"
+        },
+    }, log_level=logging.DEBUG)
