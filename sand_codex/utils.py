@@ -5,6 +5,7 @@ from contextlib import contextmanager
 from sand_codex.exceptions import TimeoutException
 import signal
 
+
 def text_to_tar_stream(text: str, name: str):
     tar_stream = BytesIO()
     tar = tarfile.TarFile(fileobj=tar_stream, mode="w")

@@ -4,3 +4,7 @@ class ContainerException(Exception):
 
 class TimeoutException(Exception):
     pass
+
+
+class ParametersException(Exception):
+    pass
