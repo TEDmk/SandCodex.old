@@ -57,9 +57,20 @@ class Worker:
             "status": Status.NOT_STARTED,
             "start_time": time.time(),
             "duration": None,
+            "timeout": timeout,
         }
+        thread_timeout = threading.Thread(target=self._timeout_handler, args=(code_id,))
         thread.start()
+        thread_timeout.start()
         return code_id
+
+    def _timeout_handler(self, code_id):
+        self._check_code_id(code_id)
+        time.sleep(self._execs[code_id]["timeout"])
+        if self._execs[code_id]["status"] not in [Status.ERROR, Status.DONE]:
+            killed = self._kill_from_command(self._execs[code_id]["command"])
+            if killed:
+                self._execs[code_id]["status"] = Status.TIMEOUT
 
     def _exec(self, code_id: str, code: str, arguments=[]):
         self._check_code_id(code_id)
@@ -102,7 +113,7 @@ class Worker:
         self, code_id, wait_for=[Status.ERROR, Status.DONE, Status.TIMEOUT]
     ):
         self._check_code_id(code_id)
-        while self.get_info(code_id)['status'] not in wait_for:
+        while self.get_info(code_id)["status"] not in wait_for:
             time.sleep(self.delta_time)
         return self.get_info(code_id)
 
@@ -132,7 +143,8 @@ class Worker:
         return False
 
     def kill(self):
-        raise NotImplementedError()
+        if self.up:
+            self.container.kill()
 
     def _check_up(self):
         if not self.up:
